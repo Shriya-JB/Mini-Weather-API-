@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Weather App</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: white;
+    }
+
+    .card {
+        background: #1e293b;
+        padding: 25px;
+        border-radius: 12px;
+        width: 320px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    input {
+        width: 90%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 6px;
+        border: none;
+        outline: none;
+    }
+
+    button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 6px;
+        background: #3b82f6;
+        color: white;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background: #2563eb;
+    }
+
+    .result {
+        margin-top: 20px;
+    }
+
+    .temp {
+        font-size: 32px;
+        font-weight: bold;
+    }
+
+    .error {
+        color: #f87171;
+        margin-top: 10px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>Weather App</h2>
+
+    <input type="text" id="city" placeholder="Enter city name"/>
+    <button onclick="getWeather()">Get Weather</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+async function getWeather() {
+    const city = document.getElementById("city").value;
+    const result = document.getElementById("result");
+
+    if (!city) {
+        result.innerHTML = "<p class='error'>Please enter a city name</p>";
+        return;
+    }
+
+    const apiKey = "906111169c4b437e9d971536261006";
+    const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}&aqi=yes`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.error) {
+            result.innerHTML = `<p class='error'>${data.error.message}</p>`;
+            return;
+        }
+
+        result.innerHTML = `
+            <div>
+                <h3>${data.location.name}, ${data.location.country}</h3>
+                <p class="temp">${data.current.temp_c}°C</p>
+                <p>${data.current.condition.text}</p>
+                <img src="${data.current.condition.icon}" />
+            </div>
+        `;
+
+    } catch (error) {
+        result.innerHTML = "<p class='error'>Failed to fetch weather data</p>";
+    }
+}
+</script>
+
+</body>
+</html>
